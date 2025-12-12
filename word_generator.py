@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Random word generation based on a provided text file.
 
