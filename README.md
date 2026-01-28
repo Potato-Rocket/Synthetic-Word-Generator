@@ -37,7 +37,7 @@ This script is best executed from the command line.
 
 ## Sample Output
 
-Following is a sample of the generator's output when provieded the text of [*Moby Dick*](https://www.gutenberg.org/ebooks/2701), by Herman Melville:
+Following is a sample of the generator's output when provided the text of [*Moby Dick*](https://www.gutenberg.org/ebooks/2701), by Herman Melville:
 
 ```
 strawartioundound
