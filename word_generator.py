@@ -63,15 +63,16 @@ def parse_words(text):
         
         text = ''.join(result)
 
-        print("Tokenizing text and collapsing duplicates:")
+        print("Splitting text and collapsing duplicates:")
         # Step 3: Split words, discard short ones, count frequency
-        rawlist = text.split()
+        rawlist = list(set(text.split()))
         wordlist = []
         for word in tqdm(rawlist):
             word = word.strip('-')
             if len(word) > CONTEXT_SIZE:
-                if word not in wordlist:
-                    wordlist.append(word)
+                wordlist.append(word)
+        
+        wordlist = list(set(wordlist))
 
         return wordlist
 
@@ -218,17 +219,20 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    text = ""
+    text = []
     for fname in args.filenames:
         print(f"Trying to load file: {fname}")
         try:
             with open(fname, 'r') as file:
                 book = file.read()
-                print(f"File loaded successfully: {len(book)} chars")
-                text += "\n\n" + book
-            
+                text.append(book)
+
+            print(f"File loaded successfully: {len(book)} chars")
+
         except FileNotFoundError as e:
             print("File not found!")
+    
+    text = "\n\n".join(text)
     
     if len(text) < MIN_LENGTH:
         print("Insufficient text added!")
