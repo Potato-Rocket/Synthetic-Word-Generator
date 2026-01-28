@@ -215,7 +215,7 @@ if __name__ == "__main__":
 
     parser.add_argument("-o", "--output", help="a file to write the generated words to")
 
-    parser.add_argument("filenames", nargs="*", help="a list of plaintext files to build the Markov Chain model based on")
+    parser.add_argument("filenames", nargs="*", help="a list of plaintext files to use as sample text to build the Markov chain model")
 
     args = parser.parse_args()
 
