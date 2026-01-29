@@ -1,4 +1,5 @@
+data
+books
 *.txt
-*.json
 .vscode
 __pycache__

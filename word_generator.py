@@ -195,7 +195,7 @@ def generate_words(text, count):
 
     model = build_model(wordlist)
 
-    json.dump(model, open("model.json", "w"), indent=2, ensure_ascii=False)
+    json.dump(model, open("data/model.json", "w"), indent=2, ensure_ascii=False)
     distribution = length_distribution(wordlist)
 
     print(f"\nGenerating {count} Jabberwocky words")
