@@ -6,6 +6,7 @@ Implements N-gram markov chains to mimic english phonetics.
 """
 import unicodedata
 import re
+import json
 import random
 import logging
 import sys
@@ -19,7 +20,7 @@ UNICODE_FIXES = str.maketrans({
 
 INITIATOR = '#'
 TERMINATOR = '$'
-CONTEXT_SIZE = 2
+CONTEXT_LENGTH = 2
 MIN_LENGTH = 2000
 
 def parse_words(text):
@@ -69,7 +70,7 @@ def parse_words(text):
         wordlist = []
         for word in tqdm(rawlist):
             word = word.strip('-')
-            if len(word) > CONTEXT_SIZE:
+            if len(word) > CONTEXT_LENGTH:
                 wordlist.append(word)
         
         wordlist = list(set(wordlist))
@@ -100,7 +101,7 @@ def build_model(wordlist):
         # For each character in the word following the initiator
         for i in range(1, len(word)):
             # Get the context and current letter
-            context = word[:i][-CONTEXT_SIZE:]
+            context = word[:i][-CONTEXT_LENGTH:]
             letter = word[i]
             # Make sure the requisite dictionary entries exist
             if context not in model.keys():
@@ -134,6 +135,7 @@ def length_distribution(wordlist):
         distribution[length] += 1
     
     distribution = dict(sorted(distribution.items(), key=lambda item: item[0]))
+    from matplotlib import pyplot as plt
 
     cumulative = [0]
 
@@ -162,7 +164,7 @@ def generate_word(model, distribution):
     word = INITIATOR
 
     while word[-1] != TERMINATOR:
-        context = word[-CONTEXT_SIZE:]
+        context = word[-CONTEXT_LENGTH:]
         weights = model[context]
         if TERMINATOR in weights.keys():
             weights = weights.copy()
@@ -192,6 +194,8 @@ def generate_words(text, count):
         return None
 
     model = build_model(wordlist)
+
+    json.dump(model, open("model.json", "w"), indent=2, ensure_ascii=False)
     distribution = length_distribution(wordlist)
 
     print(f"\nGenerating {count} Jabberwocky words")
@@ -213,11 +217,14 @@ if __name__ == "__main__":
 
     parser.add_argument("-c", "--count", type=int, default=10, help="the number of words to generate")
 
+    parser.add_argument("-l", "--context_length", type=int, default=CONTEXT_LENGTH, help="the context length of the model")
+
     parser.add_argument("-o", "--output", help="a file to write the generated words to")
 
     parser.add_argument("filenames", nargs="*", help="a list of plaintext files to use as sample text to build the Markov chain model")
 
     args = parser.parse_args()
+    CONTEXT_LENGTH = args.context_length
 
     text = []
     for fname in args.filenames:
@@ -227,7 +234,7 @@ if __name__ == "__main__":
                 book = file.read()
                 text.append(book)
 
-            print(f"File loaded successfully: {len(book)} chars")
+            print(f"File loaded successfully: {len(book):,} chars")
 
         except FileNotFoundError as e:
             print("File not found!")
@@ -238,6 +245,8 @@ if __name__ == "__main__":
         print("Insufficient text added!")
         sys.exit()
     
+    print(f"\nSuccessfully loaded {len(text):,} chars in total")
+
     words = generate_words(text, args.count)
 
     if args.output:
