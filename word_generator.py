@@ -238,13 +238,13 @@ if __name__ == "__main__":
 
         except FileNotFoundError as e:
             print("File not found!")
-    
+
     text = "\n\n".join(text)
-    
+
     if len(text) < MIN_LENGTH:
         print("Insufficient text added!")
         sys.exit()
-    
+
     print(f"\nSuccessfully loaded {len(text):,} chars in total")
 
     words = generate_words(text, args.count)
